@@ -6,7 +6,12 @@ import ipaddress
 import unittest
 
 
-def check(nets, addr):
+def check(nets, addr: str):
+    """Return True if `addr` matches any of the networks in `nets`.
+
+    `nets` must be a sequence of strings.
+
+    """
     ip = ipaddress.ip_address(addr)
     for net in nets:
         if ip in set(ipaddress.ip_network(net).hosts()):
@@ -15,6 +20,11 @@ def check(nets, addr):
 
 
 def subset(nets):
+    """Merge a sequence of possibly overlapping networks.
+
+    `nets` must be a sequence of strings.
+
+    """
     networks = sorted(ipaddress.ip_network(net) for net in nets)
 
     def grouper(net):
