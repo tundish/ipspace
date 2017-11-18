@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # encoding: UTF-8
 
+import itertools
 import ipaddress
 import unittest
 
@@ -14,7 +15,20 @@ def check(nets, addr):
 
 
 def subset(nets):
-    return None
+    networks = sorted(ipaddress.ip_network(net) for net in nets)
+
+    def grouper(net):
+        for other in networks:
+            if net.overlaps(other):
+                return other
+        return net
+
+    groups = itertools.groupby(networks, grouper)
+    merged = [
+        net for parent, subs in groups
+        for net in ipaddress.collapse_addresses(subs)
+    ]
+    return [str(i) for i in merged]
 
 
 class AssignmentTest(unittest.TestCase):
